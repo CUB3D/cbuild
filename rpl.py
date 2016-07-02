@@ -38,7 +38,7 @@ def rplSingleFile(inFile, outFile):
     file = open(outFile, "w")
     for line in input:
         if sourceString in line:
-            print("Match found in file", filePath)
+            print("[RPL] Match found in file", filePath)
             file.write(line.replace(sourceString, destinationString))
         else:
             file.write(line)
