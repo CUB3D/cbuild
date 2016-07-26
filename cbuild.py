@@ -115,6 +115,31 @@ def compileRequiredByDepends(filename):
         return len(changedFiles) > 0
     return False
 
+commands = {}
+
+def registerCommand(name, callback):
+    global commands
+    commands[name] = callback
+
+def mkdirCallback(args):
+    dirName = args[0].rstrip("\n")
+    if not os.path.exists(dirName):
+        os.makedirs(dirName)
+
+"""
+registerCommand("mkdir", mkdirCallback)
+
+
+while lineNumber < len(lines):
+    data = lines[lineNumber].split(" ")
+    print(data[0])
+    if data[0] in commands:
+        commands[data[0]](data[1:])
+    lineNumber += 1
+
+    exit(0)
+"""
+
 while lineNumber < len(lines):
     data = lines[lineNumber].split(" ")
     if data[0] == "forall":
@@ -125,9 +150,7 @@ while lineNumber < len(lines):
         exec_forall()
 
     if data[0] == "mkdir":
-        dirName = strip_string(data[1])
-        if not os.path.exists(dirName):
-            os.makedirs(dirName)
+        mkdirCallback(data[1:])
     lineNumber += 1
 
     if data[0] == "run":
