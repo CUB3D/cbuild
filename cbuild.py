@@ -157,6 +157,9 @@ while lineNumber < len(lines):
         print("[INFO]", " ".join(data[1:]))
     if data[0] == "rpl":
         execSystemCommand("tools/build/rpl.py " + " ".join(data[1:]))
+    if data[0] == "deps":
+        if data[1] == "add":
+            checkCompileNeeded(data[2].rstrip("\n"))
 
 print("[INFO] Build completed")
 
