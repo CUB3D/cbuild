@@ -57,7 +57,7 @@ def execSystemCommand(command):
         print("Command:", command)
         sys.exit(1)
 
-def exec_forall():
+def exec_forall(dirs):
     global lineNumber
     while True:
         lineNumber += 1
@@ -122,9 +122,20 @@ def registerCommand(name, callback):
     commands[name] = callback
 
 def mkdirCallback(args):
-    dirName = args[0].rstrip("\n")
+    dirName = strip_string(args[0])
     if not os.path.exists(dirName):
         os.makedirs(dirName)
+
+def depsCallback(args):
+    global lines
+    global lineNumber
+    if args[0] == "add":
+        #check if adding a file or another project
+        if os.path.exists(strip_string(args[1])):
+            checkCompileNeeded(strip_string(args[1]))
+        else:
+            os.system(sys.argv[0] + " " + strip_string(args[1]))
+
 
 """
 registerCommand("mkdir", mkdirCallback)
@@ -147,7 +158,7 @@ while lineNumber < len(lines):
         if len(data) >= 3 and data[2] == "in":
             startDir = data[3].replace("\n", "")
         dirs = findAllDirectories(data[1], replace_vars(startDir))
-        exec_forall()
+        exec_forall(dirs)
 
     if data[0] == "mkdir":
         mkdirCallback(data[1:])
@@ -181,8 +192,7 @@ while lineNumber < len(lines):
     if data[0] == "rpl":
         execSystemCommand("tools/build/rpl.py " + " ".join(data[1:]))
     if data[0] == "deps":
-        if data[1] == "add":
-            checkCompileNeeded(data[2].rstrip("\n"))
+        depsCallback(data[1:])
 
 print("[INFO] Build completed")
 
